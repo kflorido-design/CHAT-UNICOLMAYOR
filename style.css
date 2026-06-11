@@ -1,1 +1,298 @@
+/* ==========================================================================
+   LEGALBOT COLOMBIA - HOJA DE ESTILOS PREMIUM
+   ========================================================================== */
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
+
+:root {
+    --primary-color: #0f172a;       /* Azul Oxford Nocturno */
+    --accent-color: #b45309;        /* Dorado/Ámbar institucional */
+    --bg-app: #f1f5f9;              /* Fondo gris/azul muy suave */
+    --panel-bg: #ffffff;            /* Fondo blanco puro para paneles */
+    --text-main: #1e293b;           /* Texto oscuro legible */
+    --border-color: #cbd5e1;        /* Separadores finos */
+    --bg-bot: #f8fafc;              /* Gris elegante para el bot */
+    --bg-user: #1e3a8a;             /* Azul corporativo para el usuario */
+    
+    /* Botones de acción */
+    --btn-success: #16a34a;
+    --btn-info: #2563eb;
+    --btn-danger: #dc2626;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* --- HEADER PREMIUM --- */
+header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    color: white;
+    padding: 35px 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2);
+    border-bottom: 4px solid #d97706;
+}
+
+.header-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.header-content p {
+    font-size: 1.1rem;
+    font-weight: 300;
+    opacity: 0.9;
+}
+
+.header-content .subtitle {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+/* --- DISEÑO PARALELO (DOS COLUMNAS) --- */
+.main-content {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 30px;
+    flex: 1;
+}
+
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Paneles */
+.chat-section, .contract-section {
+    background-color: var(--panel-bg);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 650px; 
+}
+
+.chat-section h2, .contract-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* --- SISTEMA DE CHAT --- */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 15px;
+}
+
+/* Burbujas de Chat */
+.message {
+    max-width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.message-content {
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    white-space: pre-line;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Estilo del Bot */
+.message.bot {
+    align-self: flex-start;
+}
+
+.message.bot .message-content {
+    background-color: var(--bg-bot);
+    color: var(--text-main);
+    border-top-left-radius: 2px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Estilo del Usuario */
+.message.user {
+    align-self: flex-end;
+}
+
+.message.user .message-content {
+    background-color: var(--bg-user);
+    color: white;
+    border-top-right-radius: 2px;
+}
+
+/* Formulario de Entrada */
+.input-area {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    color: var(--text-main);
+}
+
+.input-area input:focus {
+    border-color: var(--bg-user);
+}
+
+.send-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.send-btn:hover {
+    background-color: #1e293b;
+}
+
+/* --- PANEL DEL CONTRATO LEGAL --- */
+.contract-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.contract-header h2 {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.contract-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Botones ejecutivos */
+.btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+}
+
+.btn:hover { opacity: 0.9; }
+
+.btn-download { background-color: var(--btn-success); }
+.btn-copy { background-color: var(--btn-info); }
+.btn-clear { background-color: var(--btn-danger); }
+
+/* Visor de pergamino de contrato */
+.contract-content {
+    flex: 1;
+    background-color: #fafafa; 
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 24px;
+    overflow-y: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #334155;
+    white-space: pre-wrap;
+}
+
+.contract-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* --- FOOTER --- */
+footer {
+    text-align: center;
+    padding: 24px 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    border-top: 1px solid #e2e8f0;
+    margin-top: 20px;
+}
+
+footer .disclaimer {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+/* Personalización del Scroll */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
