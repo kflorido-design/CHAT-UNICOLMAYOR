@@ -6,10 +6,10 @@ const state = {
   messages: [],
   contrato: '',
   contractData: {},
-  preguntaActual: 1 // Iniciamos estrictamente en la Pregunta 1 del PDF
+  preguntaActual: 1
 };
 
-// Las 29 preguntas del PDF oficial pulidas y adaptadas al modelo contractual real
+// Las 29 preguntas extraídas con precisión matemática de tu PDF oficial
 const preguntas = {
   1: "¿Comprende y acepta estos términos legales y el aviso de responsabilidad para continuar? (Escriba: Sí / No)",
   2: "¿Cuántas partes intervienen en la negociación? (Ej: 2 partes, 3 partes)",
@@ -42,23 +42,26 @@ const preguntas = {
   29: "¿Desean que el documento final incluya la incorporación formal de Anexos Técnicos de ingeniería? (Sí / No)"
 };
 
-// Inicializar la aplicación al cargar la página
-document.addEventListener('DOMContentLoaded', function () {
+// ARRANQUE SEGURO: Asegura que el HTML cargue primero antes de disparar la IA
+window.onload = function() {
   const inputElement = document.getElementById('respuesta');
   if (inputElement) {
     inputElement.addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') { enviar(); }
+      if (e.key === 'Enter') { 
+        e.preventDefault();
+        enviar(); 
+      }
     });
   }
 
-  // Despliegue del protocolo de bienvenida de la IA
+  // Despliegue del protocolo inicial en pantalla
   agregarMensajeBot(
     `🤖 <b>SISTEMA DE INTELIGENCIA JURÍDICA LEGALBOT AI ACTIVADO</b>\n\n` +
-    `He inicializado el módulo de analítica contractual basado en el modelo estructurado de desarrollo de software corporativo.\n\n` +
+    `He inicializado el módulo de analítica contractual basado en tu modelo estructurado de desarrollo de software.\n\n` +
     `<i>Cargando parámetros normativos de comercio electrónico internacional...</i>\n\n` +
     `<b>Pregunta 1 de 29:</b> ${preguntas[1]}`
   );
-});
+};
 
 function enviar() {
   const input = document.getElementById('respuesta');
@@ -67,10 +70,11 @@ function enviar() {
   const mensaje = input.value.trim();
   if (mensaje === '') return;
 
+  // Añadir al chat visual e inmediatamente procesar
   agregarMensajeUsuario(mensaje);
   input.value = '';
 
-  setTimeout(() => { procesarMensaje(mensaje); }, 400);
+  setTimeout(() => { procesarMensaje(mensaje); }, 250);
 }
 
 function agregarMensajeUsuario(texto) {
@@ -79,53 +83,4 @@ function agregarMensajeUsuario(texto) {
 
   const msgElement = document.createElement('div');
   msgElement.className = 'message user';
-  msgElement.innerHTML = `<div class="message-content">${escaparHTML(texto)}</div>`;
-  chatDiv.appendChild(msgElement);
-  chatDiv.scrollTop = chatDiv.scrollHeight;
-}
-
-function agregarMensajeBot(texto) {
-  const chatDiv = document.getElementById('chat');
-  if (!chatDiv) return;
-
-  const msgElement = document.createElement('div');
-  msgElement.className = 'message bot';
-  msgElement.innerHTML = `<div class="message-content">${texto}</div>`;
-  chatDiv.appendChild(msgElement);
-  chatDiv.scrollTop = chatDiv.scrollHeight;
-}
-
-function escaparHTML(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-// Lógica de Validación y Ruteo
-function procesarMensaje(mensaje) {
-  const limpio = mensaje.toLowerCase().trim();
-
-  // Validación de la Pregunta 1
-  if (state.preguntaActual === 1) {
-    if (limpio.includes('si') || limpio.includes('sí') || limpio.includes('acepto')) {
-      state.contractData[`pregunta_1`] = mensaje;
-      state.preguntaActual = 2;
-      agregarMensajeBot(`🧠 <b>IA Analizadora:</b> Consentimiento registrado. Iniciando fase de identificación corporativa.\n\n<b>Pregunta 2 de 29:</b> ${preguntas[2]}`);
-    } else {
-      agregarMensajeBot('⚠️ <b>ERROR DE PROTOCOLO:</b> Es obligatorio aceptar los términos del aviso legal para poder estructurar la minuta de forma segura.');
-    }
-    return;
-  }
-
-  // Validación de longitud mínima de seguridad
-  if (mensaje.length < 2 && !limpio.includes('n/a') && !limpio.includes('no')) {
-    agregarMensajeBot(`❌ <b>RESPUESTA INSUFICIENTE:</b> La información provista es muy corta para blindar la cláusula jurídica. Por favor, escriba una respuesta más detallada.\n\n<b>Por favor responde de nuevo:</b>\n${preguntas[state.preguntaActual]}`);
-    return;
-  }
-
-  // Guardar datos validados
-  state.contractData[`pregunta_${state.preguntaActual}`] = mensaje;
-  state.preguntaActual++;
-
-  // Si quedan preguntas por realizar
-  if (preguntas[state.preguntaActual]) {
-    agregarMensajeBot(`<b>Pregunta ${state.preguntaActual} de 29:</b> ${preguntas[state.preguntaActual]}`);
-  } else {
+  msgElement.innerHTML =
