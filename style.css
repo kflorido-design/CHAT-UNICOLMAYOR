@@ -1,282 +1,223 @@
-/* ==========================================================================
-   LEGALBOT COLOMBIA - HOJA DE ESTILOS (style.css)
-   ========================================================================== */
+// ========================================
+// LEGALBOT - ASISTENTE DE CONTRATOS TECNOLÓGICOS
+// ========================================
 
-:root {
-    --primary-color: #1e3a8a;       /* Azul marino legal */
-    --primary-hover: #1d4ed8;       /* Azul más brillante */
-    --secondary-color: #0f172a;     /* Gris oscuro para texto */
-    --bg-color: #f1f5f9;            /* Fondo suave de la aplicación */
-    --card-bg: #ffffff;             /* Fondo blanco para paneles */
-    --user-msg: #dbeafe;            /* Azul claro para usuario */
-    --bot-msg: #f8fafc;             /* Gris claro para LegalBot */
-    --border-color: #e2e8f0;        /* Gris para bordes */
-    --text-muted: #64748b;          /* Gris para descripciones */
-    
-    --btn-download: #16a34a;        /* Verde */
-    --btn-copy: #2563eb;            /* Azul */
-    --btn-clear: #dc2626;           /* Rojo */
-}
+const state = {
+  messages: [],
+  contrato: '',
+  conversationHistory: [],
+  contractData: {},
+  preguntaActual: 0
+};
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+const preguntas = [
+  "¿Comprende y acepta estos términos para continuar?",
+  "¿Cuántas partes intervienen en la negociación?",
+  "Datos de la Primera Parte: Razón social, NIT, domicilio, correo y representante legal.",
+  "Datos de la Segunda Parte: Razón social, registro societario, país de constitución, domicilio, correo y representante legal.",
+  "¿Cuál es el objeto principal de la colaboración tecnológica?",
+  "Fecha estimada de inicio del proyecto.",
+  "Duración de la Fase Inicial.",
+  "Duración de la Fase de Pruebas.",
+  "Duración de la Fase de Modificaciones y Ajustes.",
+  "¿Cuál será la duración total del contrato?",
+  "¿Las obligaciones se ejecutarán desde varios países?",
+  "¿La plataforma tendrá usuarios en más de una jurisdicción?",
+  "¿La plataforma almacenará información fuera del país?",
+  "¿Cuál es el valor económico estimado del proyecto?",
+  "¿Qué método o moneda se utilizará para pagos internacionales?",
+  "¿Cuál será el alcance del uso de activos digitales?",
+  "¿Cuánto tiempo subsistirá la confidencialidad?",
+  "¿Quién tendrá la titularidad del software y código fuente?",
+  "¿Qué modelo de responsabilidad prefieren?",
+  "¿Qué nivel de ciberseguridad desean?",
+  "¿Qué idioma será el oficial del contrato?",
+  "¿Qué ley regirá el contrato?",
+  "¿Qué mecanismo de solución de controversias desean?",
+  "Si hay arbitraje, indique la sede.",
+  "Si hay arbitraje, indique el idioma.",
+  "¿Qué nivel de regulación digital desean incorporar?",
+  "¿Cómo desean regular los datos personales?",
+  "¿Desean cláusulas adicionales?",
+  "¿Desean anexos técnicos?",
+  "¿Desean revisión legal previa?"
+];
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--secondary-color);
-    line-height: 1.5;
-}
+// Inicializar el chatbot
+document.addEventListener('DOMContentLoaded', function () {
+  console.log('LegalBot iniciado de manera correcta.');
+  agregarMensajeBot(`
+Bienvenido al Asistente Jurídico para la creación de Contratos Internacionales de Colaboración Tecnológica.
 
-.container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 24px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
+Este chatbot ofrece una guía automatizada y una minuta básica conforme a las leyes de la República de Colombia. No sustituye el asesoramiento de un abogado.
 
-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 32px 24px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
+¿Comprende y acepta estos términos para continuar? (Sí / No)
+  `);
 
-.header-content h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-}
-
-.header-content p {
-    font-size: 1.1rem;
-    font-weight: 300;
-    opacity: 0.9;
-}
-
-.header-content .subtitle {
-    font-size: 0.85rem;
-    opacity: 0.7;
-    margin-top: 4px;
-    font-style: italic;
-}
-
-.main-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    flex: 1;
-}
-
-@media (max-width: 900px) {
-    .main-content {
-        grid-template-columns: 1fr;
+  // Soporte para enviar con la tecla Enter
+  document.getElementById('respuesta').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      enviar();
     }
+  });
+});
+
+// Enviar mensajes del usuario
+function enviar() {
+  const input = document.getElementById('respuesta');
+  const mensaje = input.value.trim();
+
+  if (mensaje === '') return;
+
+  agregarMensajeUsuario(mensaje);
+  input.value = '';
+
+  // Simular un pequeño retraso del Bot para mejorar la experiencia
+  setTimeout(() => {
+    procesarMensaje(mensaje);
+  }, 400);
 }
 
-.chat-section, .contract-section {
-    background-color: var(--card-bg);
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    height: 600px; 
+function agregarMensajeUsuario(mensaje) {
+  const chatDiv = document.getElementById('chat');
+  const messageElement = document.createElement('div');
+  messageElement.className = 'message user';
+  messageElement.innerHTML = `<div class="message-content">${escaparHTML(mensaje)}</div>`;
+  chatDiv.appendChild(messageElement);
+  chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
-.chat-section h2, .contract-header h2 {
-    font-size: 1.4rem;
-    color: var(--primary-color);
-    font-weight: 600;
-    margin-bottom: 16px;
+function agregarMensajeBot(mensaje) {
+  const chatDiv = document.getElementById('chat');
+  const messageElement = document.createElement('div');
+  messageElement.className = 'message bot';
+  messageElement.innerHTML = `<div class="message-content">${mensaje}</div>`;
+  chatDiv.appendChild(messageElement);
+  chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
-.chat-container {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: hidden;
+function escaparHTML(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
-.chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-bottom: 16px;
-    border-bottom: 1px solid var(--border-color);
+// Procesar flujo de preguntas secuenciales
+function procesarMensaje(mensaje) {
+  const mensajeLower = mensaje.toLowerCase().trim();
+
+  // Pregunta 0: Aceptación de términos
+  if (state.preguntaActual === 0) {
+    if (mensajeLower.includes("si") || mensajeLower.includes("sí")) {
+      state.preguntaActual = 1;
+      agregarMensajeBot(preguntas[1]);
+    } else {
+      agregarMensajeBot("Gracias. El proceso ha finalizado ya que no se aceptaron los términos.");
+    }
+    return;
+  }
+
+  // Guardar la respuesta actual de forma dinámica
+  state.contractData["pregunta_" + state.preguntaActual] = mensaje;
+  state.preguntaActual++;
+
+  // Si quedan preguntas por hacer, lanzar la siguiente
+  if (state.preguntaActual < preguntas.length) {
+    agregarMensajeBot(preguntas[state.preguntaActual]);
+  } else {
+    // Al finalizar el cuestionario, generamos automáticamente la minuta completa
+    generarContrato();
+  }
 }
 
-.message {
-    max-width: 80%;
-    display: flex;
-    flex-direction: column;
+// Generación Dinámica de la Minuta Legal
+function generarContrato() {
+  let contenido = `CONTRATO INTERNACIONAL DE COLABORACIÓN TECNOLÓGICA\n\n`;
+  
+  contenido += `ANTECEDENTES Y PARTES:\n`;
+  contenido += `• PRIMERA PARTE: ${state.contractData.pregunta_2 || '___________'}\n`;
+  contenido += `• SEGUNDA PARTE: ${state.contractData.pregunta_3 || '___________'}\n\n`;
+  
+  contenido += `CLAUSULADO PRINCIPAL:\n`;
+  contenido += `PRIMERA. OBJETO: El presente acuerdo regula el desarrollo de la siguiente colaboración tecnológica:\n${state.contractData.pregunta_4 || '___________'}\n\n`;
+  
+  contenido += `SEGUNDA. CRONOGRAMA Y FASES:\n`;
+  contenido += `- Fecha de inicio del proyecto: ${state.contractData.pregunta_5 || '___________'}\n`;
+  contenido += `- Duración Fase Inicial: ${state.contractData.pregunta_6 || '___________'}\n`;
+  contenido += `- Duración Fase de Pruebas: ${state.contractData.pregunta_7 || '___________'}\n`;
+  contenido += `- Duración Fase de Ajustes: ${state.contractData.pregunta_8 || '___________'}\n`;
+  contenido += `- Duración Total del Vínculo: ${state.contractData.pregunta_9 || '___________'}\n\n`;
+  
+  contenido += `TERCERA. LOGÍSTICA E INFRAESTRUCTURA DIGITAL:\n`;
+  contenido += `- Ejecución Multijurisdiccional: ${state.contractData.pregunta_10 || '___________'}\n`;
+  contenido += `- Usuarios de la Plataforma: ${state.contractData.pregunta_11 || '___________'}\n`;
+  contenido += `- Servidores y Almacenamiento de Datos: ${state.contractData.pregunta_12 || '___________'}\n\n`;
+  
+  contenido += `CUARTA. ASPECTOS ECONÓMICOS Y MONEDA:\n`;
+  contenido += `- Valor Estimado del Proyecto: $${state.contractData.pregunta_13 || '___________'}\n`;
+  contenido += `- Divisa o Método de Pago Internacional: ${state.contractData.pregunta_14 || '___________'}\n`;
+  contenido += `- Uso de Activos Digitales: ${state.contractData.pregunta_15 || '___________'}\n\n`;
+  
+  contenido += `QUINTA. PROPIEDAD INTELECTUAL Y CONFIDENCIALIDAD:\n`;
+  contenido += `- Plazo de la Confidencialidad: ${state.contractData.pregunta_16 || '___________'}\n`;
+  contenido += `- Titularidad del Código Fuente y Software: ${state.contractData.pregunta_17 || '___________'}\n\n`;
+  
+  contenido += `SEXTA. MARCO DE SEGURIDAD Y RESPONSABILIDAD:\n`;
+  contenido += `- Modelo de Responsabilidad: ${state.contractData.pregunta_18 || '___________'}\n`;
+  contenido += `- Estándares de Ciberseguridad: ${state.contractData.pregunta_19 || '___________'}\n`;
+  contenido += `- Regulación de Datos Personales (Habeas Data): ${state.contractData.pregunta_26 || '___________'}\n\n`;
+  
+  contenido += `SÉPTIMA. LEY APLICABLE Y SOLUCIÓN DE CONTROVERSIAS:\n`;
+  contenido += `- Idioma Oficial del Contrato: ${state.contractData.pregunta_20 || '___________'}\n`;
+  contenido += `- Ley de Regencia: ${state.contractData.pregunta_21 || 'Leyes de la República de Colombia'}\n`;
+  contenido += `- Método de Solución (Arbitraje/Tribunales): ${state.contractData.pregunta_22 || '___________'}\n`;
+  if (state.contractData.pregunta_23 || state.contractData.pregunta_24) {
+    contenido += `- Sede del Arbitraje: ${state.contractData.pregunta_23 || '___________'} | Idioma: ${state.contractData.pregunta_24 || '___________'}\n`;
+  }
+  
+  contenido += `\nOCTAVA. ELEMENTOS ADICIONALES:\n`;
+  contenido += `- Regulación Digital: ${state.contractData.pregunta_25 || 'Alineado a normativas vigentes'}\n`;
+  contenido += `- Cláusulas Especiales: ${state.contractData.pregunta_27 || 'Ninguna'}\n`;
+  contenido += `- Anexos Técnicos Incorporados: ${state.contractData.pregunta_28 || 'Ninguno'}\n`;
+  contenido += `- Requiere Revisión Legal Previa: ${state.contractData.pregunta_29 || '___________'}\n\n`;
+  
+  contenido += `En constancia del acuerdo mutuo, las partes firman el presente borrador auxiliar de minuta técnica.\n\n`;
+  contenido += `__________________________              __________________________\n`;
+  contenido += `FIRMA PRIMERA PARTE                     FIRMA SEGUNDA PARTE\n`;
+
+  state.contrato = contenido;
+  
+  // Mostrarlo en el panel derecho de la interfaz
+  document.getElementById('contrato').innerHTML = `
+    <div class="contract-title">MINUTA AUXILIAR GENERADA</div>
+    <div style="white-space: pre-wrap;">${contenido}</div>
+  `;
+  
+  agregarMensajeBot('✅ ¡Información completa! La minuta estructurada se ha generado de forma exitosa en el panel derecho. Puedes descargarla o copiarla.');
 }
 
-.message-content {
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-size: 0.95rem;
-    white-space: pre-line;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+// Acciones de Botones
+function descargarContrato() {
+  if (!state.contrato) return alert('No hay ningún contrato generado para descargar todavía.');
+  const elemento = document.createElement('a');
+  const contenido = new Blob([state.contrato], { type: 'text/plain;charset=utf-8' });
+  elemento.setAttribute('href', URL.createObjectURL(contenido));
+  elemento.setAttribute('download', `minuta_colaboracion_tecnologica.txt`);
+  elemento.click();
 }
 
-.message.bot {
-    align-self: flex-start;
+function copiarContrato() {
+  if (!state.contrato) return alert('No hay contenido para copiar.');
+  navigator.clipboard.writeText(state.contrato).then(() => {
+    alert('¡Minuta copiada con éxito al portapapeles!');
+  });
 }
 
-.message.bot .message-content {
-    background-color: var(--bot-msg);
-    color: var(--secondary-color);
-    border-top-left-radius: 2px;
-    border: 1px solid var(--border-color);
+function limpiarContrato() {
+  document.getElementById('contrato').innerHTML = '';
+  document.getElementById('chat').innerHTML = '';
+  state.contrato = '';
+  state.contractData = {};
+  state.preguntaActual = 0;
+  agregarMensajeBot('Se han limpiado los registros. ¿Deseas iniciar una nueva consulta? (Sí / No)');
 }
-
-.message.user {
-    align-self: flex-end;
-}
-
-.message.user .message-content {
-    background-color: var(--primary-color);
-    color: white;
-    border-top-right-radius: 2px;
-}
-
-.input-area {
-    display: flex;
-    gap: 12px;
-}
-
-.input-area input {
-    flex: 1;
-    padding: 14px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.input-area input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
-}
-
-.send-btn {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0 24px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s;
-}
-
-.send-btn:hover {
-    background-color: var(--primary-hover);
-}
-
-.contract-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 12px;
-    margin-bottom: 16px;
-}
-
-.contract-header h2 {
-    margin-bottom: 0;
-}
-
-.contract-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.btn {
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: opacity 0.2s, transform 0.1s;
-}
-
-.btn:hover { opacity: 0.9; }
-.btn:active { transform: scale(0.97); }
-
-.btn-download { background-color: var(--btn-download); }
-.btn-copy { background-color: var(--btn-copy); }
-.btn-clear { background-color: var(--btn-clear); }
-
-.contract-content {
-    flex: 1;
-    background-color: #fafafa;
-    border: 1px dashed #cbd5e1;
-    border-radius: 8px;
-    padding: 24px;
-    overflow-y: auto;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: #334155;
-    white-space: pre-wrap;
-}
-
-.contract-title {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-align: center;
-    color: var(--primary-color);
-    margin-bottom: 20px;
-    text-transform: uppercase;
-}
-
-footer {
-    text-align: center;
-    padding: 16px 0;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    border-top: 1px solid var(--border-color);
-    margin-top: auto;
-}
-
-footer p { margin-bottom: 4px; }
-footer .disclaimer { font-size: 0.75rem; color: #94a3b8; }
-
-/* Scrollbars */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
